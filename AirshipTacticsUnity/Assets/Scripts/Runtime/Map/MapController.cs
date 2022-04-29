@@ -48,13 +48,14 @@ public class MapController : MonoBehaviour
     private MapTile CreateGridCell(int x, int y)
     {
         MapTile tile = Instantiate(MapTilePrefab, transform);
-        tile.name = $"Cell ({x},{y})";
-        tile.Init(new Vector2Int(x, y));
         Vector3 modelScale = Vector3.one * 1.75f;
         float halfGridSize = Dimensions.x / 2f;
         Vector2 offsetPosition = new Vector2((x - halfGridSize) / 1.15f, (y + (x % 2 == 0 ? 0 : 0.5f) - halfGridSize) * -1);
         Vector2 scaledOffsetPosition = Vector2.Scale(offsetPosition, new Vector2(modelScale.x, modelScale.y));
-        tile.transform.localPosition = new Vector3(transform.position.x + scaledOffsetPosition.x, 0, transform.position.y + scaledOffsetPosition.y);
+        Vector3 localPos = new Vector3(transform.position.x + scaledOffsetPosition.x, 0, transform.position.y + scaledOffsetPosition.y);
+        tile.transform.localPosition = localPos;
+        tile.name = $"Cell ({x},{y})";
+        tile.Init(new Vector2Int(x, y), localPos);
         return tile;
     }
 
@@ -64,12 +65,16 @@ public class MapController : MonoBehaviour
         {
             for (int y = 0; y < Dimensions.y; y++)
             {
-                MapTiles[x, y].Neighbours = new Dictionary<CardinalDirections, MapTile>
+                int yOffset = x % 2 == 0 ? 1 : 0;
+                MapTiles[x, y].Neighbours = new Dictionary<Directions, MapTile>
                 {
-                    {CardinalDirections.North, y-1 >= 0 ? MapTiles[x, y-1] : null},
-                    {CardinalDirections.East, x+1 < Dimensions.x ? MapTiles[x+1, y] : null},
-                    {CardinalDirections.South, y+1 < Dimensions.y ? MapTiles[x, y+1] : null},
-                    {CardinalDirections.West, x-1 >= 0 ? MapTiles[x-1, y] : null},
+                    {Directions.North, y-1 >= 0 ? MapTiles[x, y-1] : null},
+                    {Directions.NorthEast, x+1 < Dimensions.x && y - yOffset >= 0 ? MapTiles[x+1, y - yOffset] : null},
+                    {Directions.NorthWest, x-1 >= 0 && y - yOffset >= 0 ? MapTiles[x-1, y - yOffset] : null},
+
+                    {Directions.South, y+1 < Dimensions.y ? MapTiles[x, y+1] : null},
+                    {Directions.SouthEast, x+1 < Dimensions.x && y - yOffset + 1 < Dimensions.y ? MapTiles[x+1, y - yOffset + 1] : null},
+                    {Directions.SouthWest, x-1 >= 0 &&  y - yOffset + 1 < Dimensions.y ? MapTiles[x-1, y - yOffset + 1] : null},
                 };
             }
         }

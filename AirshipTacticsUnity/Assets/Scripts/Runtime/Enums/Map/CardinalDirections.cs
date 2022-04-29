@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CardinalDirections
+public enum Directions
 {
     North,
-    East,
+    NorthEast,
+    SouthEast,
     South,
-    West
+    SouthWest,
+    NorthWest
 }

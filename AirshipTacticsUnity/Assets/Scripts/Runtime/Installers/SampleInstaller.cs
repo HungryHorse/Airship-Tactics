@@ -11,6 +11,10 @@ public class SampleInstaller : MonoInstaller
     private GameController GameController => gameController;
 
     [SerializeField]
+    private MapController mapController;
+    private MapController MapController => mapController;
+
+    [SerializeField]
     private CameraController cameraControllerPrefab;
     private CameraController CameraControllerPrefab => cameraControllerPrefab;
 
@@ -21,6 +25,10 @@ public class SampleInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        Container.BindInterfacesAndSelfTo<MapController>()
+            .FromComponentInNewPrefab(MapController)
+            .AsSingle()
+            .NonLazy();
         Container.BindInterfacesAndSelfTo<CameraController>()
             .FromComponentInNewPrefab(CameraControllerPrefab)
             .AsSingle()

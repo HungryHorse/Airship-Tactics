@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using FriedSynapse.FlowEnt;
 using UnityEngine;
+using Zenject;
 
-public class MapController : MonoBehaviour
+public class MapController : MonoBehaviour, IInitializable
 {
 #pragma warning disable IDE0044, RCS1169
     [SerializeField]
@@ -17,12 +18,10 @@ public class MapController : MonoBehaviour
 
     private Flow BoardFlow { get; set; }
 
-#pragma warning disable IDE0051, RCS1213
-    private void Start()
+    public void Initialize()
     {
         Load(new Vector2Int(11, 11));
     }
-#pragma warning restore IDE0051, RCS1213
 
     public void Load(Vector2Int dimensions)
     {

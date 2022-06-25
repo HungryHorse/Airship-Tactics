@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -42,6 +43,15 @@ namespace FriedSynapse.FlowEnt
 
         #endregion
 
+        #region ISeekable
+
+        private protected override bool IsSeekable => false;
+        private protected override float TotalSeekTime => throw new NotImplementedException();
+        private protected override float GetDeltaTimeFromRatio(float ratio)
+            => throw new NotImplementedException();
+
+        #endregion
+
         #region Controls
 
         /// <inheritdoc cref="AbstractAnimation.Start" />
@@ -79,7 +89,7 @@ namespace FriedSynapse.FlowEnt
         }
 
         /// <inheritdoc cref="AbstractAnimation.Stop(bool)" />
-        /// \copydoc AbstractUpdatable.Stop
+        /// \copydoc AbstractUpdatable.Stop(bool)
         public new Flow Stop(bool triggerOnCompleted = false)
         {
             StopInternal(triggerOnCompleted);
@@ -120,8 +130,6 @@ namespace FriedSynapse.FlowEnt
                 throw new AnimationException(this, "Cannot start empty flow.");
             }
 
-            playState = PlayState.Waiting;
-
             if (skipFrames > 0)
             {
                 StartSkipFrames();
@@ -147,19 +155,21 @@ namespace FriedSynapse.FlowEnt
 
         private void StartUpdatables(float deltaTime)
         {
-            for (int i = 0; i < updatableWrappersQueue.Count; i++)
+            int count = updatableWrappersQueue.Count;
+            runningUpdatableWrappersCount = count;
+            for (int i = 0; i < count; i++)
             {
                 AbstractUpdatableWrapper updatableWrapper = updatableWrappersQueue[i];
                 AbstractUpdatable updatable = updatableWrapper.GetUpdatable();
                 runningUpdatableWrappers.Add(updatable.Id, updatableWrapper);
                 updatable.StartInternal(deltaTime);
             }
-            runningUpdatableWrappersCount = updatableWrappersQueue.Count;
         }
 
         private void FirstUpdateInternal(float deltaTime)
         {
             float scaledDeltaTime = deltaTime * timeScale;
+            elapsedTime += scaledDeltaTime;
 
             onUpdated?.Invoke(scaledDeltaTime);
         }
@@ -167,6 +177,7 @@ namespace FriedSynapse.FlowEnt
         internal override void UpdateInternal(float deltaTime)
         {
             float scaledDeltaTime = deltaTime * timeScale;
+            elapsedTime += scaledDeltaTime;
 
             AbstractUpdatable index = updatables.anchor.next;
 
@@ -185,6 +196,7 @@ namespace FriedSynapse.FlowEnt
 
             if (!(remainingLoops <= 0))
             {
+                elapsedTime = 0;
                 onLoopCompleted?.Invoke(remainingLoops);
                 ResetUpdatables();
                 onLoopStarted?.Invoke(remainingLoops);
@@ -254,7 +266,12 @@ namespace FriedSynapse.FlowEnt
                 AbstractUpdatableWrapper updatableWrapper = updatableWrappersQueue[i];
                 do
                 {
-                    updatableWrapper.GetUpdatable().Reset();
+                    AbstractUpdatable updatable = updatableWrapper.GetUpdatable();
+                    if (updatable is AbstractAnimation animation && animation.PlayState != PlayState.Finished)
+                    {
+                        animation.Stop();
+                    }
+                    updatable.Reset();
                     updatableWrapper = updatableWrapper.next;
                 } while (updatableWrapper != null);
             }

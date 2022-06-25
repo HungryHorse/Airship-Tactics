@@ -5,9 +5,9 @@ using UnityEngine;
 
 public static class CameraControllerMotionExtensions
 {
-    public static EchoMotionProxy<TCameraController> MoveByInput<TCameraController>(this EchoMotionProxy<TCameraController> proxy, float speed = CameraController.MoveCameraByInputMotion.DefaultSpeed)
+    public static EchoMotionProxy<TCameraController> MoveByInput<TCameraController>(this EchoMotionProxy<TCameraController> proxy, float speed = CameraController.MoveCameraByInputMotion.DefaultSpeed, float altitudeSpeed = CameraController.MoveCameraByInputMotion.DefaultSpeed)
         where TCameraController : CameraController
-        => proxy.Apply(new CameraController.MoveCameraByInputMotion(proxy.Item, speed));
+        => proxy.Apply(new CameraController.MoveCameraByInputMotion(proxy.Item, speed, altitudeSpeed));
 
     public static EchoMotionProxy<TCameraController> RotateByInput<TCameraController>(this EchoMotionProxy<TCameraController> proxy, float speed = CameraController.RotateCameraByInputMotion.DefaultSensitivity)
         where TCameraController : CameraController

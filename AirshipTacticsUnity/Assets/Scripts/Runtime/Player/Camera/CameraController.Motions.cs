@@ -18,16 +18,21 @@ public partial class CameraController
         public MoveCameraByInputMotion(CameraController item, float speed = DefaultSpeed, float altitudeSpeed = DefaultSpeed) : base(item, speed)
         {
             transform = item.transform;
+            this.altitudeSpeed = altitudeSpeed;
         }
 
         private readonly Transform transform;
+        private readonly float altitudeSpeed;
 
         public override void OnUpdate(float deltaTime)
         {
-            Vector3 move = (transform.forward * Input.GetAxis("Vertical")) + (transform.right * Input.GetAxis("Horizontal")) + (transform.up * Input.GetAxis("Altitude"));
+            Vector3 move = (transform.forward * Input.GetAxis("Vertical")) + (transform.right * Input.GetAxis("Horizontal"));
+            Vector3 altitudeChange = transform.up * Input.GetAxis("Altitude");
             move = Vector3.ClampMagnitude(move, 1);
+            altitudeChange = Vector3.ClampMagnitude(altitudeChange, 1);
 
             transform.position += move * speed * deltaTime;
+            transform.position += altitudeChange * altitudeSpeed * deltaTime;
         }
     }
 
@@ -57,6 +62,11 @@ public partial class CameraController
 
         public override void OnUpdate(float deltaTime)
         {
+            if (Input.GetButton("Swivel"))
+            {
+                Vector3 rotation = transform.up * Input.GetAxis("Mouse X");
+                transform.Rotate(rotation * sensitivity);
+            }
         }
     }
 }

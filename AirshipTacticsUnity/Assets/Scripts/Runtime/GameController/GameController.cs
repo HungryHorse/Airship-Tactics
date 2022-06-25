@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using FriedSynapse.Quickit;
 using UnityEngine;
+using Zenject;
 
-public class GameController : ManualSingletonBehaviour<GameController>
+public class GameController : MonoBehaviour, IGameController, IInitializable
 {
-#pragma warning disable IDE0044, RCS1169
-    [SerializeField]
-    private CameraController cameraController;
-    private CameraController CameraController => cameraController;
-#pragma warning restore IDE0044, RCS1169
+    private CameraController CameraController;
+    private PlayerUnitFactory PlayerUnitFactory;
 
-#pragma warning disable IDE0051, RCS1213
-    private void Awake()
+    [Inject]
+    public void Construct(CameraController cameraController, PlayerUnitFactory playerUnitFactory)
     {
-        CameraController.Init();
-        CameraController.StartEcho();
+        CameraController = cameraController;
+        PlayerUnitFactory = playerUnitFactory;
     }
-#pragma warning restore IDE0051, RCS1213
+
+    public void Initialize()
+    {
+        PlayerUnitFactory.Create(UnitClasses.Frigate);
+    }
 }

@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using FriedSynapse.FlowEnt;
 using UnityEngine;
+using Zenject;
 
-public partial class CameraController : MonoBehaviour
+public partial class CameraController : MonoBehaviour, IInitializable
 {
 #pragma warning disable IDE0044, RCS1169
     [SerializeField]
@@ -25,12 +26,13 @@ public partial class CameraController : MonoBehaviour
 
     private Echo CameraMovementEcho { get; set; }
 
-    public void Init()
+    public void Initialize()
     {
         CameraMovementEcho = new Echo()
             .For(this)
-                .MoveByInput(MoveSpeed)
+                .MoveByInput(MoveSpeed, AltitudeSpeed)
                 .RotateByInput(RotationSpeed);
+        CameraMovementEcho.Start();
     }
 
     public void StartEcho()

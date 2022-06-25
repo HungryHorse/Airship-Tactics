@@ -16,6 +16,7 @@ namespace FriedSynapse.FlowEnt
                 }
             }
         }
+
         public bool AutoStart
         {
             get => autoStartHelper != null;
@@ -52,16 +53,38 @@ namespace FriedSynapse.FlowEnt
             }
         }
 
-        private protected PlayState playState;
+        private protected PlayState playState = PlayState.Building;
         /// <summary>
         /// The current state of the animation.
         /// </summary>
         public PlayState PlayState => playState;
 
+        /// <summary>
+        /// Executes the <paramref name="onConditionTrue"/> if <paramref name="condition"/> returns true.
+        /// </summary>
+        /// <param name="condition">The condition.</param>
+        /// <param name="onConditionTrue">The callback.</param>
+        protected TAnimation ConditionalInternal<TAnimation>(Func<bool> condition, Action<TAnimation> onConditionTrue)
+            where TAnimation : AbstractAnimation
+        {
+            TAnimation animation = (TAnimation)this;
+            if (condition?.Invoke() == true)
+            {
+                onConditionTrue?.Invoke(animation);
+            }
+
+            return animation;
+        }
+
+        /// <inheritdoc cref="ConditionalInternal{TAnimation}(Func{bool}, Action{TAnimation})" />
+        /// \copydoc ConditionalInternal{TAnimation}(Func{bool}, Action{TAnimation})
+        public AbstractAnimation Conditional(Func<bool> condition, Action<AbstractAnimation> onConditionTrue)
+            => ConditionalInternal(condition, onConditionTrue);
+
         protected void SetOptions(AbstractAnimationOptions options)
         {
             Name = options.Name;
-            UpdateType = options.UpdateType;
+            updateType = options.UpdateType;
             AutoStart = options.AutoStart;
             skipFrames = options.SkipFrames;
             delay = options.Delay;

@@ -55,5 +55,6 @@
     "cSpell.words": [
         "neighbour",
         "Neighbours"
-    ]
+    ],
+    "editor.fontFamily": "'Fira Code', monospace, Monaco, Menlo, 'Courier New'"
 }

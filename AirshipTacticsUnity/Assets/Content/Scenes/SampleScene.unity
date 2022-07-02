@@ -202,6 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 6980888067623932491, guid: 9fab438eeae5c0142b7f9f1649f0ed40, type: 3}
   mapController: {fileID: 6037224427576441000, guid: fa569b45939d56e4784e9d95cf0f0e49, type: 3}
+  mapTilePrefab: {fileID: 1408489766573985047, guid: 65a308b3acc2bf64eb25cf9fdb6d11c2, type: 3}
   cameraControllerPrefab: {fileID: 3750559210571724022, guid: 354f089bb42ab4e40837d2efd8b1188d, type: 3}
   unitPrefabs:
     keys: 00000000

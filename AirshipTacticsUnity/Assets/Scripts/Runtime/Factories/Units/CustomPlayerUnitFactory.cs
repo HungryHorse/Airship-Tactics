@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public class CustomPlayerUnitFactory : IFactory<UnitClasses, AbstractUnit>
+public class CustomPlayerUnitFactory : IFactory<UnitClasses, MapTile, AbstractUnit>
 {
     private DiContainer Container { get; set; }
     private UnitPrefabs UnitPrefabs { get; set; }
@@ -15,10 +15,12 @@ public class CustomPlayerUnitFactory : IFactory<UnitClasses, AbstractUnit>
         UnitPrefabs = unitPrefabs;
     }
 
-    public AbstractUnit Create(UnitClasses unitClass)
+    public AbstractUnit Create(UnitClasses unitClass, MapTile spawnLocation)
     {
         AbstractUnit unit = Container.InstantiatePrefabForComponent<AbstractUnit>(UnitPrefabs[unitClass]);
-        unit.gameObject.AddComponent<PlayerUnit>();
+        PlayerUnit playerComponent = unit.gameObject.AddComponent<PlayerUnit>();
+        Container.Inject(playerComponent);
+        unit.transform.position = spawnLocation.transform.position + unit.Offset;
         return unit;
     }
 }

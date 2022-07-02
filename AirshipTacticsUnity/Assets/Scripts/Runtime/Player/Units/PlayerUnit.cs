@@ -1,10 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class PlayerUnit : MonoBehaviour, ISelectable
 {
     private bool IsHovering { get; set; }
+
+    private AbstractUnit unit;
+    public AbstractUnit BaseUnit => unit ??= GetComponent<AbstractUnit>();
+
+    private PlayerUnitController UnitController { get; set; }
+
+    [Inject]
+    public void Construct(PlayerUnitController unitController)
+    {
+        UnitController = unitController;
+    }
 
     private void OnMouseEnter()
     {
@@ -18,7 +30,7 @@ public class PlayerUnit : MonoBehaviour, ISelectable
 
     private void Update()
     {
-        if (IsHovering && Input.GetButton("Fire1"))
+        if (IsHovering && Input.GetButtonUp("Fire1"))
         {
             Select();
         }
@@ -26,6 +38,6 @@ public class PlayerUnit : MonoBehaviour, ISelectable
 
     public void Select()
     {
-        Debug.Log("Unit selected by player");
+        UnitController.Select(this);
     }
 }

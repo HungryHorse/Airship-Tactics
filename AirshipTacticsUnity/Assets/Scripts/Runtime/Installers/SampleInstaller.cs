@@ -15,12 +15,17 @@ public class SampleInstaller : MonoInstaller
     private MapController MapController => mapController;
 
     [SerializeField]
+    private MapTile mapTilePrefab;
+    private MapTile MapTilePrefab => mapTilePrefab;
+
+    [SerializeField]
     private CameraController cameraControllerPrefab;
     private CameraController CameraControllerPrefab => cameraControllerPrefab;
 
     [SerializeField]
     private UnitPrefabs unitPrefabs;
     private UnitPrefabs UnitPrefabs => unitPrefabs;
+
 #pragma warning restore IDE0044, RCS1169
 
     public override void InstallBindings()
@@ -38,7 +43,10 @@ public class SampleInstaller : MonoInstaller
             .FromComponentInNewPrefab(GameController)
             .AsSingle()
             .NonLazy();
+        Container.Bind<PlayerUnitController>()
+            .AsSingle();
         Container.Bind<UnitPrefabs>().FromInstance(UnitPrefabs).AsSingle();
-        Container.BindFactory<UnitClasses, AbstractUnit, PlayerUnitFactory>().FromFactory<CustomPlayerUnitFactory>();
+        Container.BindFactory<UnitClasses, MapTile, AbstractUnit, PlayerUnitFactory>().FromFactory<CustomPlayerUnitFactory>();
+        Container.BindFactory<MapTile, MapTile.Factory>().FromComponentInNewPrefab(MapTilePrefab);
     }
 }

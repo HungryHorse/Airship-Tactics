@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using FriedSynapse.FlowEnt;
 using UnityEngine;
+using Zenject;
 
-public class MapTile : MonoBehaviour
+public class MapTile : MonoBehaviour, ISelectable
 {
     public Vector2Int Coordinates { get; private set; }
     public Vector3 StartPosition { get; private set; }
@@ -13,6 +14,14 @@ public class MapTile : MonoBehaviour
     private AbstractAnimation TileAnimation { get; set; }
 
     public bool IsHovered { get; private set; }
+
+    private PlayerUnitController PlayerUnitController { get; set; }
+
+    [Inject]
+    public void Construct(PlayerUnitController playerUnitController)
+    {
+        PlayerUnitController = playerUnitController;
+    }
 
     public void Init(Vector2Int coordinates, Vector3 startPosition)
     {
@@ -35,6 +44,14 @@ public class MapTile : MonoBehaviour
         if (IsHovered)
         {
             GetReturnToNeutralAnimation(0.5f).OnStarted(() => IsHovered = false).Start();
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetButtonUp("Fire1") && IsHovered)
+        {
+            PlayerUnitController.Select(this);
         }
     }
 #pragma warning restore IDE0051, RCS1213
@@ -68,4 +85,13 @@ public class MapTile : MonoBehaviour
         return TileAnimation;
     }
     #endregion
+
+    public void Select()
+    {
+        PlayerUnitController.Select(this);
+    }
+
+    public class Factory : PlaceholderFactory<MapTile>
+    {
+    }
 }

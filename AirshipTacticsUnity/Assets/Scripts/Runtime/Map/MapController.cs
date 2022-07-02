@@ -6,17 +6,19 @@ using Zenject;
 
 public class MapController : MonoBehaviour, IInitializable
 {
-#pragma warning disable IDE0044, RCS1169
-    [SerializeField]
-    private MapTile mapTilePrefab;
-    private MapTile MapTilePrefab => mapTilePrefab;
-#pragma warning restore IDE0044, RCS1169
-
     public MapTile[,] MapTiles;
+
+    private MapTile.Factory TileFactory { get; set; }
 
     public Vector2Int Dimensions { get; private set; }
 
     private Flow BoardFlow { get; set; }
+
+    [Inject]
+    public void Construct(MapTile.Factory tileFactory)
+    {
+        TileFactory = tileFactory;
+    }
 
     public void Initialize()
     {
@@ -46,7 +48,8 @@ public class MapController : MonoBehaviour, IInitializable
 
     private MapTile CreateGridCell(int x, int y)
     {
-        MapTile tile = Instantiate(MapTilePrefab, transform);
+        MapTile tile = TileFactory.Create();
+        tile.gameObject.transform.SetParent(transform);
         Vector3 modelScale = Vector3.one * 1.75f;
         float halfGridSize = Dimensions.x / 2f;
         Vector2 offsetPosition = new Vector2((x - halfGridSize) / 1.15f, (y + (x % 2 == 0 ? 0 : 0.5f) - halfGridSize) * -1);
@@ -93,5 +96,10 @@ public class MapController : MonoBehaviour, IInitializable
         }
 
         BoardFlow.Start();
+    }
+
+    private MapTile GetTile(Vector2Int coordinate)
+    {
+        return MapTiles[coordinate.x, coordinate.y];
     }
 }

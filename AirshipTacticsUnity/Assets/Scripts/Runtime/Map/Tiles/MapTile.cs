@@ -6,6 +6,13 @@ using Zenject;
 
 public class MapTile : MonoBehaviour, ISelectable
 {
+#pragma warning disable IDE0044, RCS1169
+    [SerializeField]
+    private Transform model;
+    private Transform Model => model;
+#pragma warning restore IDE0044, RCS1169
+
+    public float Cost { get; } = 1;
     public Vector2Int Coordinates { get; private set; }
     public Vector3 StartPosition { get; private set; }
 
@@ -62,16 +69,16 @@ public class MapTile : MonoBehaviour, ISelectable
     {
         return new Tween(time)
             .SetEasing(Easing.EaseOutSine)
-            .For(transform)
-                .MoveLocalTo(StartPosition);
+            .For(Model)
+                .MoveTo(StartPosition);
     }
 
     public AbstractAnimation GetUpDownAnimation(float distance)
     {
         return new Tween(0.5f)
             .SetEasing(Easing.EaseOutBack)
-            .For(transform)
-                .MoveLocalYTo(distance);
+            .For(Model)
+                .MoveYTo(distance);
     }
 
     public AbstractAnimation GetWobbleAnimation()

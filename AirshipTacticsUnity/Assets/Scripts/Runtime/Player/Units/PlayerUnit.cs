@@ -7,9 +7,7 @@ public class PlayerUnit : MonoBehaviour, ISelectable
 {
     private bool IsHovering { get; set; }
 
-    private AbstractUnit unit;
-    public AbstractUnit BaseUnit => unit ??= GetComponent<AbstractUnit>();
-
+    public AbstractUnit BaseUnit { get; set; }
     private PlayerUnitController UnitController { get; set; }
 
     [Inject]

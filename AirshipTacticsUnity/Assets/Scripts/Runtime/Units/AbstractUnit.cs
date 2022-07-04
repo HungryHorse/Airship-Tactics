@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FriedSynapse.FlowEnt;
 using UnityEngine;
+using Zenject;
 
 public abstract class AbstractUnit : MonoBehaviour, IHealth, IDamageDealer
 {
@@ -13,7 +14,17 @@ public abstract class AbstractUnit : MonoBehaviour, IHealth, IDamageDealer
 
     public abstract UnitClasses Class { get; }
 
-    private AbstractAnimation MovementAnimation { get; set; }
+    private Flow MovementAnimation { get; set; }
+
+    private MapController MapController { get; set; }
+
+    public MapTile CurrentLocation { get; set; }
+
+    [Inject]
+    public void Construct(MapController mapController)
+    {
+        MapController = mapController;
+    }
 
     public void DealDamage(IHealth target)
     {
@@ -39,13 +50,23 @@ public abstract class AbstractUnit : MonoBehaviour, IHealth, IDamageDealer
         }
     }
 
-    public void MoveToTile(MapTile mapTile)
+    public void MoveToTile(MapTile target)
     {
         MovementAnimation?.Stop();
-        MovementAnimation = new Tween(0.5f)
-            .SetEasing(Easing.EaseInOutSine)
-            .For(transform)
-                .MoveTo(mapTile.transform.position + Offset)
-            .Start();
+        MovementAnimation = new Flow();
+
+        List<MapTile> pathfinding = PathFinding.AStar(MapController.MapTiles, CurrentLocation, target);
+
+        foreach (MapTile mapTile in pathfinding)
+        {
+            MovementAnimation.Queue(new Tween(0.5f)
+                .SetEasing(Easing.EaseInOutSine)
+                .For(transform)
+                    .MoveTo(mapTile.transform.position + Offset)
+                .OnCompleted(() => CurrentLocation = mapTile)
+            );
+        }
+
+        MovementAnimation.Start();
     }
 }

@@ -18,7 +18,9 @@ public class CustomPlayerUnitFactory : IFactory<UnitClasses, MapTile, AbstractUn
     public AbstractUnit Create(UnitClasses unitClass, MapTile spawnLocation)
     {
         AbstractUnit unit = Container.InstantiatePrefabForComponent<AbstractUnit>(UnitPrefabs[unitClass]);
+        unit.CurrentLocation = spawnLocation;
         PlayerUnit playerComponent = unit.gameObject.AddComponent<PlayerUnit>();
+        playerComponent.BaseUnit = unit;
         Container.Inject(playerComponent);
         unit.transform.position = spawnLocation.transform.position + unit.Offset;
         return unit;

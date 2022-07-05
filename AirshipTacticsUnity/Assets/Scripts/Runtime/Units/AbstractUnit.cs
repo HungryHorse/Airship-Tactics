@@ -60,7 +60,6 @@ public abstract class AbstractUnit : MonoBehaviour, IHealth, IDamageDealer
         foreach (MapTile mapTile in pathfinding)
         {
             MovementAnimation.Queue(new Tween(0.5f)
-                .SetEasing(Easing.EaseInOutSine)
                 .For(transform)
                     .MoveTo(mapTile.transform.position + Offset)
                 .OnCompleted(() => CurrentLocation = mapTile)

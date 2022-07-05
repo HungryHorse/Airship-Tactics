@@ -207,7 +207,7 @@ MonoBehaviour:
   unitPrefabs:
     keys: 00000000
     values:
-    - Value: {fileID: 8788763297145957755, guid: d222a63263131d2498d70f1ffcdb9a86, type: 3}
+    - Value: {fileID: 6638975056638823713, guid: 9a1e3f4a90e24dc4c8651b535cc73357, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

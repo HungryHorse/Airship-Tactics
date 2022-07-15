@@ -55,7 +55,9 @@
     "cSpell.words": [
         "Initializable",
         "neighbour",
-        "Neighbours"
+        "Neighbours",
+        "Serialisable",
+        "Serialisation"
     ],
     "editor.fontFamily": "'Fira Code', monospace, Monaco, Menlo, 'Courier New'"
 }

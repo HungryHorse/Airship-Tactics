@@ -50,6 +50,12 @@ public abstract class AbstractUnit : MonoBehaviour, IHealth, IDamageDealer
         }
     }
 
+    public void SetTile(MapTile tile)
+    {
+        CurrentLocation = tile;
+        transform.position = CurrentLocation.transform.position + Offset;
+    }
+
     public void MoveToTile(MapTile target)
     {
         MovementAnimation?.Stop();

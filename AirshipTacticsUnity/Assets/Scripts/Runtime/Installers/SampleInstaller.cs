@@ -48,5 +48,7 @@ public class SampleInstaller : MonoInstaller
         Container.Bind<UnitPrefabs>().FromInstance(UnitPrefabs).AsSingle();
         Container.BindFactory<UnitClasses, MapTile, AbstractUnit, PlayerUnitFactory>().FromFactory<CustomPlayerUnitFactory>();
         Container.BindFactory<MapTile, MapTile.Factory>().FromComponentInNewPrefab(MapTilePrefab);
+        Container.Bind<SerialisationController>()
+            .AsSingle();
     }
 }

@@ -65,8 +65,57 @@ public partial class CameraController
             if (Input.GetButton("Swivel"))
             {
                 Vector3 rotation = transform.up * Input.GetAxis("Mouse X");
-                transform.Rotate(rotation * sensitivity);
+                transform.Rotate(rotation * sensitivity * deltaTime);
             }
+        }
+    }
+
+    public class ZoomCameraByInputMotion : AbstractEchoMotion<CameraController>
+    {
+        public const float DefaultSensitivity = 5f;
+
+        [Serializable]
+        public class Builder : AbstractBuilder
+        {
+#pragma warning disable IDE0044, RCS1169
+            [SerializeField]
+            private float sensitivity = DefaultSensitivity;
+            [SerializeField]
+            private AnimationCurve animationCurve;
+#pragma warning restore IDE0044, RCS1169
+            public override IEchoMotion Build()
+                => new ZoomCameraByInputMotion(item, animationCurve, sensitivity);
+        }
+
+        public ZoomCameraByInputMotion(CameraController item, AnimationCurve zoomCurve, float sensitivity = DefaultSensitivity) : base(item)
+        {
+            this.sensitivity = sensitivity;
+            transform = item.transform;
+            this.zoomCurve = zoomCurve;
+            maxGradient = zoomCurve.Differentiate(1);
+            minGradient = zoomCurve.Differentiate(0);
+            startingHeight = transform.position.y;
+        }
+
+        private readonly float sensitivity;
+        private readonly Transform transform;
+        private readonly AnimationCurve zoomCurve;
+
+        private readonly float maxGradient;
+        private readonly float minGradient;
+
+        private readonly float startingHeight;
+
+        private float x = 1;
+
+        public override void OnUpdate(float deltaTime)
+        {
+            x = Mathf.Clamp01(x + (Input.GetAxis("Mouse ScrollWheel") * sensitivity * deltaTime));
+
+            float normalizedGradient = (zoomCurve.Differentiate(x) - minGradient) / (maxGradient - minGradient);
+
+            transform.position = new Vector3(transform.position.x, startingHeight * zoomCurve.Evaluate(x), transform.position.z);
+            transform.rotation = Quaternion.Euler(Mathf.Lerp(90, 0, normalizedGradient), transform.eulerAngles.y, transform.eulerAngles.z);
         }
     }
 }

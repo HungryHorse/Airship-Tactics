@@ -12,4 +12,8 @@ public static class CameraControllerMotionExtensions
     public static EchoMotionProxy<TCameraController> RotateByInput<TCameraController>(this EchoMotionProxy<TCameraController> proxy, float speed = CameraController.RotateCameraByInputMotion.DefaultSensitivity)
         where TCameraController : CameraController
         => proxy.Apply(new CameraController.RotateCameraByInputMotion(proxy.Item, speed));
+
+    public static EchoMotionProxy<TCameraController> ZoomByInput<TCameraController>(this EchoMotionProxy<TCameraController> proxy, AnimationCurve zoomCurve, float speed = CameraController.RotateCameraByInputMotion.DefaultSensitivity)
+        where TCameraController : CameraController
+        => proxy.Apply(new CameraController.ZoomCameraByInputMotion(proxy.Item, zoomCurve, speed));
 }

@@ -22,6 +22,14 @@ public partial class CameraController : MonoBehaviour, IInitializable
     [SerializeField]
     private float rotationSpeed;
     private float RotationSpeed => rotationSpeed;
+
+    [SerializeField]
+    private AnimationCurve zoomCurve;
+    private AnimationCurve ZoomCurve => zoomCurve;
+
+    [SerializeField]
+    private float zoomSpeed;
+    private float ZoomSpeed => zoomSpeed;
 #pragma warning restore IDE0044, RCS1169
 
     private Echo CameraMovementEcho { get; set; }
@@ -31,7 +39,8 @@ public partial class CameraController : MonoBehaviour, IInitializable
         CameraMovementEcho = new Echo()
             .For(this)
                 .MoveByInput(MoveSpeed, AltitudeSpeed)
-                .RotateByInput(RotationSpeed);
+                .RotateByInput(RotationSpeed)
+                .ZoomByInput(ZoomCurve, ZoomSpeed);
         CameraMovementEcho.Start();
     }
 
